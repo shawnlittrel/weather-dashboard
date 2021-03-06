@@ -8,7 +8,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
-    <link
+    <link 
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
@@ -57,7 +57,7 @@
           <div class="row">
             <div class="col s9 offset-s1 section" id="current-weather">
               <div
-                class="card green lighten-1 z-depth-3 hide"
+                class="card green lighten-1 z-depth-3 hide center"
                 id="current-weather-card"
               >
                 <div class="container">
@@ -65,17 +65,21 @@
                     ><strong id="current-weather-title"></strong
                   ></span>
 
-                  <p id="card-temp"></p>
-                  <p id="card-humidity"></p>
-                  <p id="card-wind-speed"></p>
-                  <p id="card-uv-index"></p>
+                  <p id="card-temp"><strong>Temp: </strong><span id="temp-here"></span></p>
+                  <p id="card-dewpoint"><strong>Dewpoint: </strong><span id="dewpoint-here"></span></p>
+                  <p id="card-wind-speed"><strong>Windspeed: </strong><span id="wind-here"></span></p>
+                  <p id="card-uv-index"><strong>UV Index: </strong><span id="uvi-here"></span></p>
                 </div>
               </div>
             </div>
           </div>
           <div class="divider"></div>
           <!-- Below current search detail is 5 day forecast-->
-          <div class="section" id="weather-forecast">More Stuff</div>
+          <div class="section" id="weather-forecast">
+              <div id="weather-cards">
+              </div>
+
+          </div>
         </div>
       </div>
     </div>

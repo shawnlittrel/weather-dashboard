@@ -1,5 +1,5 @@
 //pull search term from text box
-var searchEl = "phoenix, AZ"; //document.querySelector("#search-input");
+var searchEl = "phoenix, AZ"; //document.querySelector("#search-input").value;
 var currentEl = document.querySelector("#current-weather");
 var forecastEl = document.querySelector("#weather-forecast");
 var cardEl = document.querySelector("#current-weather-card");
@@ -66,6 +66,9 @@ function searchLocation(lat, long) {
           currentWindSpeed,
           currentUv
         );
+
+        forecastDisplay(weatherForecast);
+
       });
     } else {
       alert("Error: " + response.statusText);
@@ -78,17 +81,18 @@ function currentWeatherDisplay(temp, dewpoint, wind, uv) {
   //insert info into elements for current weather
   var currentDate = dayjs().format("MMM D");
   var cityTitle = searchEl.charAt(0).toUpperCase() + searchEl.slice(1);
-  var uvi = document.querySelector("#card-uv-index");
-  document.querySelector("#current-weather-title").textContent =
-    cityTitle + " on " + currentDate + ":";
-  document.querySelector("#card-temp").innerHTML =
-    "<strong>Temp: </strong>" + temp + " degrees";
-  document.querySelector("#card-humidity").innerHTML =
-    "<strong>Dewpoint: </strong>" + dewpoint + " degrees";
-  document.querySelector("#card-wind-speed").innerHTML =
-    "<strong>Windspeed: </strong>" + wind + " mph";
-  uvi.innerHTML = "<strong>UVI: </strong>" + uv;
+  var titleText = document.querySelector("#current-weather-title");
+  var tempText = document.querySelector("#temp-here");
+  var dewText = document.querySelector("#dewpoint-here");
+  var windText = document.querySelector("#wind-here")
+  var uvi = document.querySelector("#uvi-here");
 
+  titleText.textContent = cityTitle + " on " + currentDate + ":";
+
+  tempText.textContent = temp + " degrees";
+  dewText.textContent = dewpoint + " degrees";
+  windText.textContent = wind + " mph";
+  uvi.innerHTML = "&nbsp &nbsp" + uv + "&nbsp &nbsp";
   //format background for UV index based on danger
   if (uv < 3) {
     uvi.classList.remove(
@@ -136,11 +140,55 @@ function currentWeatherDisplay(temp, dewpoint, wind, uv) {
   document.querySelector("#current-weather-card").classList.remove("hide");
 }
 
-function forecastDisplay() {
+function forecastDisplay(array) {
+  //clear old information
+  document.querySelector("#weather-cards").textContent = ""
   //pull information out of array for each upcoming day
-  //insert info into cards
-  //color cards by high temp
-  //show cards
+  for(i = 0; i < array.length; i++){
+      var high = array[i].temp.max;
+      var low = array[i].temp.min;
+      var clouds = array[i].clouds;
+      var date = dayjs().add(i, 'day').format("MM/DD/YY");
+    
+      //append data to cards and place on page
+      createForecastCard(high, low, clouds, date);
+  };
+
+};
+
+function createForecastCard(high, low, clouds, date){
+   //create new div
+   var card = document.createElement("div");
+   var cloudPct
+   
+   //add card classes
+   card.classList.add("card-panel", "center", "col", "s12", "m6", "l3");
+
+   //format background color based on clouds
+   if(clouds < 30){
+       card.classList.add("blue", "lighten-2");
+       cloudPct = "<p>Sunny</p>";
+   }
+   else if(clouds > 30 && clouds < 50){
+       card.classList.add("light-blue", "lighten-4");
+       cloudPct = "<p>Mostly Sunny</p>";
+   }
+   else if(clouds > 50 && clouds < 70){
+       card.classList.add("blue-grey", "lighten-4");
+       cloudPct = "<p>Mostly Cloudy</p>";
+   }
+   else{
+       card.classList.add("grey");
+       cloudPct = "<p>Cloudy</p>";
+   }
+
+   //add HTML to card
+   card.innerHTML = "<p><strong>" + date + "</strong></p>" +
+                    "<p> H: &nbsp &nbsp" + high + "</p>" +
+                    "<p> L: &nbsp &nbsp" + low + "</p>" + cloudPct;
+
+    //append to page
+    document.querySelector("#weather-cards").appendChild(card);
 }
 
 //save location to history
