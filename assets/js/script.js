@@ -1,5 +1,6 @@
 //pull search term from text box
-var searchEl = document.querySelector('#search-input').value;
+var searchObj = document.querySelector('#search-input');
+var searchEl = "";
 var currentEl = document.querySelector("#current-weather");
 var forecastEl = document.querySelector("#weather-forecast");
 var cardEl = document.querySelector("#current-weather-card");
@@ -8,8 +9,7 @@ let cityData = [];
 
 //convert location to lat/long
 function getLocation() {
-  //debugger;
-  console.log(searchEl);
+  searchEl = searchObj.value;
 
   var coordApi =
     "http://api.positionstack.com/v1/forward?access_key=f1ea9c11296bb9b55231907c9490a377&query=" +
