@@ -4,10 +4,10 @@ var searchEl = "";
 var currentEl = document.querySelector("#current-weather");
 var forecastEl = document.querySelector("#weather-forecast");
 var cardEl = document.querySelector("#current-weather-card");
-let cityData = [];
-
+var cityData = [];
 
 //convert location to lat/long
+debugger;
 function getLocation() {
   searchEl = searchObj.value;
 
@@ -25,7 +25,7 @@ function getLocation() {
           searchLat = data.data[0].latitude;
           searchLong = data.data[0].longitude;
           //add Lat/Long data to history array
-          cityData.push({
+          cityData.unshift({
             city: searchEl,
             latitude: searchLat,
             longitude: searchLong,
@@ -197,7 +197,13 @@ function createForecastCard(high, low, clouds, date){
 
 //save all city data to local storage
 function saveCity(arr){
+  //clip array to 5 entries
+  if(arr.length > 5){
+    arr.length = 5;
+  };
+  //save to local storage
     localStorage.setItem("searchHistory", JSON.stringify(arr));
+    getCity();
 };
 
 //load all city data
@@ -213,19 +219,33 @@ function getCity(){
 
 //push city data array to history tab
 function loadHistory(){
+  //empty old results
+  document.querySelector("#search-history").textContent = "";
+
+  //if there is any info in local storage
+  if(cityData.length > 0){
+  //loop through existing data
     for(i = 0; i < cityData.length; i++){
         var city = cityData[i].city;
-        console.log('city', city);
         var card = document.createElement("div");
         var text = document.createElement("span");
 
+        //add classes to card elements
         card.classList.add("card-panel", "green", "lighten-3");
         text.classList.add("grey-text", "text-darken-2");
 
-        //text.textContent = city;
-
-        
+        //add text to span
+        text.textContent = city;
+        //append span to card
+        card.appendChild(text)
+        //append card to page
+        document.querySelector("#search-history").prepend(card);        
     }
+  }
+  //otherwise return
+  else{return};
+
 };
 
+getCity();
 document.querySelector("#search-button").addEventListener("click", getLocation);
