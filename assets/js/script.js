@@ -1,12 +1,16 @@
 //pull search term from text box
-var searchEl = "phoenix, AZ"; //document.querySelector("#search-input").value;
+var searchEl = document.querySelector('#search-input').value;
 var currentEl = document.querySelector("#current-weather");
 var forecastEl = document.querySelector("#weather-forecast");
 var cardEl = document.querySelector("#current-weather-card");
 let cityData = [];
 
+
 //convert location to lat/long
 function getLocation() {
+  //debugger;
+  console.log(searchEl);
+
   var coordApi =
     "http://api.positionstack.com/v1/forward?access_key=f1ea9c11296bb9b55231907c9490a377&query=" +
     searchEl +
@@ -28,7 +32,7 @@ function getLocation() {
           });
 
           //saveArray to localStorage
-          //saveCity();
+          saveCity(cityData);
 
           //pass findings to searchLocation
           searchLocation(searchLat, searchLong);
@@ -191,6 +195,37 @@ function createForecastCard(high, low, clouds, date){
     document.querySelector("#weather-cards").appendChild(card);
 }
 
-//save location to history
+//save all city data to local storage
+function saveCity(arr){
+    localStorage.setItem("searchHistory", JSON.stringify(arr));
+};
 
-getLocation();
+//load all city data
+function getCity(){
+    var savedCities = localStorage.getItem("searchHistory");
+
+    if(savedCities){
+        cityData = JSON.parse(savedCities);
+    } else{cityData = []}
+
+    loadHistory();
+}
+
+//push city data array to history tab
+function loadHistory(){
+    for(i = 0; i < cityData.length; i++){
+        var city = cityData[i].city;
+        console.log('city', city);
+        var card = document.createElement("div");
+        var text = document.createElement("span");
+
+        card.classList.add("card-panel", "green", "lighten-3");
+        text.classList.add("grey-text", "text-darken-2");
+
+        //text.textContent = city;
+
+        
+    }
+};
+
+document.querySelector("#search-button").addEventListener("click", getLocation);
