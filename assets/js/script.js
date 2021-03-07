@@ -152,7 +152,7 @@ function currentWeatherDisplay(temp, dewpoint, wind, uv) {
   }
 
   //show card
-  document.querySelector("#current-weather-card").classList.remove("hide");
+  document.querySelector("#current-weather").classList.remove("hide");
 }
 
 function forecastDisplay(array) {
@@ -205,6 +205,8 @@ function createForecastCard(high, low, clouds, date){
 
     //append to page
     document.querySelector("#weather-cards").appendChild(card);
+    //show div
+    document.querySelector("#weather-forecast").classList.remove("hide");
 }
 
 //save all city data to local storage
