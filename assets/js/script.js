@@ -5,11 +5,18 @@ var currentEl = document.querySelector("#current-weather");
 var forecastEl = document.querySelector("#weather-forecast");
 var cardEl = document.querySelector("#current-weather-card");
 var cityData = [];
+var searchHistory = document.querySelector("#search-history");
 
 //convert location to lat/long
-debugger;
-function getLocation() {
-  searchEl = searchObj.value;
+function objToStr(){
+  var searchString = searchObj.value;
+
+  getLocation(searchString);
+};
+
+//search for coordinates with string data
+function getLocation(str) {
+  searchEl = str
 
   var coordApi =
     "http://api.positionstack.com/v1/forward?access_key=f1ea9c11296bb9b55231907c9490a377&query=" +
@@ -24,12 +31,16 @@ function getLocation() {
         .then(function (data) {
           searchLat = data.data[0].latitude;
           searchLong = data.data[0].longitude;
-          //add Lat/Long data to history array
-          cityData.unshift({
-            city: searchEl,
-            latitude: searchLat,
-            longitude: searchLong,
+          //add Lat/Long data to history array if it does not already exist
+          if(cityData.includes(searchEl)){
+            return
+          }else{
+            cityData.unshift({
+              city: searchEl,
+              latitude: searchLat,
+              longitude: searchLong,
           });
+        }
 
           //saveArray to localStorage
           saveCity(cityData);
@@ -90,9 +101,9 @@ function currentWeatherDisplay(temp, dewpoint, wind, uv) {
   var dewText = document.querySelector("#dewpoint-here");
   var windText = document.querySelector("#wind-here")
   var uvi = document.querySelector("#uvi-here");
-
+  //format card title
   titleText.textContent = cityTitle + " on " + currentDate + ":";
-
+  //format other card data
   tempText.textContent = temp + " degrees";
   dewText.textContent = dewpoint + " degrees";
   windText.textContent = wind + " mph";
@@ -171,25 +182,26 @@ function createForecastCard(high, low, clouds, date){
    //format background color based on clouds
    if(clouds < 30){
        card.classList.add("blue", "lighten-2");
-       cloudPct = "<p>Sunny</p>";
+       cloudPct = '<p><i class="far fa-sun"></i> &nbsp Sunny</p>';
    }
    else if(clouds > 30 && clouds < 50){
        card.classList.add("light-blue", "lighten-4");
-       cloudPct = "<p>Mostly Sunny</p>";
+       cloudPct = '<p><i class="far fa-sun"></i> &nbsp Mostly Sunny</p>';
    }
    else if(clouds > 50 && clouds < 70){
        card.classList.add("blue-grey", "lighten-4");
-       cloudPct = "<p>Mostly Cloudy</p>";
+       cloudPct = '<p><i class="fas fa-cloud-sun"></i> &nbsp Mostly Cloudy</p>';
    }
    else{
        card.classList.add("grey");
-       cloudPct = "<p>Cloudy</p>";
+       cloudPct = '<p><i class="fas fa-cloud"></i> &nbsp Cloudy</p>';
    }
 
    //add HTML to card
    card.innerHTML = "<p><strong>" + date + "</strong></p>" +
+                    cloudPct +
                     "<p> H: &nbsp &nbsp" + high + "</p>" +
-                    "<p> L: &nbsp &nbsp" + low + "</p>" + cloudPct;
+                    "<p> L: &nbsp &nbsp" + low + "</p>";
 
     //append to page
     document.querySelector("#weather-cards").appendChild(card);
@@ -208,12 +220,13 @@ function saveCity(arr){
 
 //load all city data
 function getCity(){
+    //pull object from storage and associate
     var savedCities = localStorage.getItem("searchHistory");
-
+    //if anything was pulled from storage, parse from JSON, otherwise set empty array
     if(savedCities){
         cityData = JSON.parse(savedCities);
     } else{cityData = []}
-
+    //populate historic searches with data
     loadHistory();
 }
 
@@ -229,23 +242,46 @@ function loadHistory(){
         var city = cityData[i].city;
         var card = document.createElement("div");
         var text = document.createElement("span");
-
-        //add classes to card elements
-        card.classList.add("card-panel", "green", "lighten-3");
+        //var historyArray = document.querySelectorAll("div.history-card")
+        //add classes and id to card elements
+        card.classList.add("card-panel", "s4", "green", "lighten-3", "center", "history-card");
         text.classList.add("grey-text", "text-darken-2");
-
+        card.setAttribute("id", 'card' + i)
+      /*
+        //check existing cards to see if search term already exists
+        for(i = 0; i < historyArray.length; i++){
+          if(historyArray.contains(city)){
+            return
+          }
+          else{
+      */
         //add text to span
         text.textContent = city;
         //append span to card
-        card.appendChild(text)
+        card.appendChild(text);
         //append card to page
         document.querySelector("#search-history").prepend(card);        
-    }
+          }
+        //}
+        
+    //}
   }
   //otherwise return
   else{return};
 
 };
 
+//pull up results for historic searches
+searchHistory.onclick = function(event){
+  //which element was clicked?
+  let target = event.target;
+  //get text content of clicked card
+  var targetText = target.textContent;
+  //pass to global variable
+  searchStr = targetText;
+  //run search for clicked card
+  getLocation(targetText);
+}
+
 getCity();
-document.querySelector("#search-button").addEventListener("click", getLocation);
+document.querySelector("#search-button").addEventListener("click", objToStr);
