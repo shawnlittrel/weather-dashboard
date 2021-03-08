@@ -16,7 +16,7 @@ Landing Page
 ![Screenshot](/assets/images/landing-page.JPG?raw=true "Landing Page")
 
 Example Search Results
-![Screenshot](/assets/images/search-results.JPG?raw=true "Search Results")
+![Screenshot](/assets/images/search-info.JPG?raw=true "Search Results")
 
 
 **Future Improvements**
