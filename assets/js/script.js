@@ -18,10 +18,11 @@ function objToStr(){
 function getLocation(str) {
   searchEl = str
 
-  var coordApi =
-    "http://api.positionstack.com/v1/forward?access_key=f1ea9c11296bb9b55231907c9490a377&query=" +
-    searchEl +
-    "&limit=1";
+
+  
+  var coordApi = 
+  "https://www.mapquestapi.com/geocoding/v1/address?key=EQkGdzk2jcyttezVyDYB7RVoIFelwlPS&location=" + searchEl + "&maxResults=1"
+
   //fetch coordinate data based on city name input
   fetch(coordApi).then(function (response) {
     if (response.ok) {
@@ -29,8 +30,8 @@ function getLocation(str) {
         .json()
         //drill down to pertinent data
         .then(function (data) {
-          searchLat = data.data[0].latitude;
-          searchLong = data.data[0].longitude;
+          searchLat = data.results[0].locations[0].latLng.lat;
+          searchLong = data.results[0].locations[0].latLng.lng;
           //add Lat/Long data to history array if it does not already exist
           if(cityData.includes(searchEl)){
             return
